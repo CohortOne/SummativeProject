@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+		<div  th:fragment="navbar">
+		<div class="container-fluid ">
+					<nav class="navbar navbar-expand-lg bg-primary navbar-dark sticky-top" >
+
+					<!--  adding image to the nav bar -->
+					<div class="navbar-header m-3">
+					    <a class="navbar-brand" href="#">
+					      <img class="img-responsive" width="130px" height="" src="https://instructure-uploads-apse1.s3.ap-southeast-1.amazonaws.com/account_81960000000000001/attachments/78818/lhub2020-logo.png">
+					    </a>
+					</div>
+					<!--  Finish adding image to the nav bar -->
+					
+					<!--  adding items to the nav bar -->
+						<ul class="navbar-nav">
+							<li class="nav-item">
+								<a class="nav-link " href="/"><span class="fa fa-home"></span></a>
+							</li>
+							
+									<!--  adding submenus items to the nav bar -->
+							
+									<li class="nav-item dropdown">
+										    <a class="nav-link dropdown-toggle" href="/" data-toggle="dropdown">  Products  </a>
+										    <ul class="dropdown-menu">
+											  <li><a class="dropdown-item" href="/products"> View Products </a></li>
+											  <li><a class="dropdown-item" href="/products/new"> Add Products </a> </li>
+											 </ul>
+									</li>		
+									
+									<li class="nav-item dropdown">
+										    <a class="nav-link dropdown-toggle" href="/" data-toggle="dropdown">  Categories  </a>
+										    <ul class="dropdown-menu">
+											  <li><a class="dropdown-item" href="/categories"> View Categories </a></li>
+											  <li><a class="dropdown-item" href="/categories/new"> Add Category </a> </li>
+											 </ul>
+									</li>			
+									
+									<li class="nav-item dropdown">
+										    <a class="nav-link dropdown-toggle" href="/" data-toggle="dropdown">  Brands  </a>
+									    	<ul class="dropdown-menu">
+											  <li><a class="dropdown-item" href="/brands"> View Brands </a></li>
+											  <li><a class="dropdown-item" href="/brands/new"> Add Brands </a> </li>
+											 </ul>
+									</li>											
+									<!--  Finish -- adding submenus items to the nav bar -->
+									
+																
+							<!--  Finish adding items to the nav bar -->
+					</ul>
+						<hr>
+						
+						<span class="navbar-text m-3">
+    									 <a href="/">logout</a>
+    					</span>
+						
+						<form class="form-inline">
+							<input type="search" class="form-control" placeholder="search" id="fieldkeyword" />
+								<button class="btn btn-primary m-2" id="buttonSearch" ><span class="fa fa-search"></span> </button> 
+						</form>	
+					</nav>
+					<hr>
+		</div>
+		</div>
+
+		<div  th:fragment="footer">
+				<div class="text-center m-3 fixed-bottom"> 
+				<h5> Copyright &copy; NTUC Ltd. </h5>
+		</div>
+			<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+			        type="text/javascript"></script>
+			<script  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" type="text/javascript"></script>
+			<script  src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+			<script src="../static/main.js" type="text/javascript" th:src="@{/main.js}"></script>
+			<script src="../static/nav.js" type="text/javascript" th:src="@{/nav.js}"></script>
+		</div>
+
+
+		<div  th:fragment="header">
+				<meta charset="ISO-8859-1">
+
+				    <!-- Required meta tags -->
+				    <meta charset="utf-8" > 
+				    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport"> 
+				    <!-- Bootstrap CSS -->
+				    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet"> </link>
+				    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> </link>
+		</div>
+		
+
+
+
+</body>
+</html>
