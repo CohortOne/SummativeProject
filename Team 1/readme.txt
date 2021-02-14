@@ -31,6 +31,15 @@ I have brought this up with Simon.
 
 In the meantime, may proceed to code Vehicle.html and VehicleController.java similar to Customer.
 
+This problem was eventually traced to the toString() methods of the pojo.
+
+Customer.toString() apart from printing class attributes, also print the Customer referred to by CustLinked.  CustLinked is a Customer itself, so
+on printing it will also try to prints its CustLinked, and thus resulted into an endless loop.  Besides, such endless loop, another problem
+likely to occur is attemting to print CustLinked.custName where CustLinked itself is null.
+
+Problem resolve, 2021-02-14.
+
+
  
 carDate 02-13.zip
 2021-02-13:
@@ -39,3 +48,20 @@ carDate 02-13.zip
 3. Vehicle: added VehStatus Repository and VehicleController.
 4. Vehicles.html: added web page for Vehicles maintenance.
 5. Customers.html: added ability to display pinned vehicle.
+
+
+carDate 02-14.zip
+2021-02-14:
+1. Customer.java: 
+   = added methods to add and remove Hire.
+   = toString to not print custLinked (which is the cause of stack overflow error),
+   = change FetchType back to EAGER.
+2. Hire.java: Corected some mistakes, enriched into a POJO.
+3. Added HireDao, HireRepo, HireDaoImpl, and HireController, and Hires.html to maintain Hires.
+4. Vehicle.java: added OnToMany relation to track hire history.
+5. Customers.html: revisions to fix various problems.
+6. Vehicles.html: revisions to fix various problems.
+7. sql_script to adapt to database changes.
+
+Application is now able to maintain Employees, Customers, Vehicles, and Hires.
+More enhancement needed on Navigation, and fee computation automation.
