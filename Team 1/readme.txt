@@ -65,3 +65,26 @@ carDate 02-14.zip
 
 Application is now able to maintain Employees, Customers, Vehicles, and Hires.
 More enhancement needed on Navigation, and fee computation automation.
+
+
+
+carDate 02-15.zip
+2021-02-15:
+1. Hire.java: added DailyRate for hire fee computation.  This is because Vehicle.dailyRate may be updated while a Vehicle is on hire. The old rate should be used for that hire.
+2. HireController: added function to Hire and Return vehicles, and function to compute hire fee.
+3. VehicleController.java: Catch database save/update exception to display error message to user.
+4. CustomerController.java: Catch database save/update exception to display error message to user.
+5. BusinessConfig.java: added effective date and extra-time surcharge.  This class is not in use yet.
+6. 4 .html, general enhancement.
+7. sql_script to adapt to database changes.
+
+Application is now able to fully function.
+Further enhancement needed:
+1. Filters for all web pages to help locate customers or pick vehicles.
+2. Replace large text labeled buttons with small icon buttons, add tool-tips.  Streamline buttons.
+3. Design more fluid navigation.
+4. How to upload, store, display, delete Customer driving license and Vehicle pictures.
+5. Generation of invoice.
+
+
+
