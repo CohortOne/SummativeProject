@@ -78,13 +78,22 @@ carDate 02-15.zip
 6. 4 .html, general enhancement.
 7. sql_script to adapt to database changes.
 
+2021-02-17:
+1. Controllers and htmls: Employees/Customers/Vehicles/Hires fix a page navigation error common to all pages.
+2. Customer.html: move some buttons around, Added tool-tips for Alt-contact buttons.
+3. Customer.html, CustomerController: correct an error in the url for Alt-contact maintenance buttons.
+4. sql_scripts: added script to genearate some test data for customers.
+5. HireController: Correct method to delete Hire.
+
+
 Application is now able to fully function.
 Further enhancement needed:
 1. Filters for all web pages to help locate customers or pick vehicles.
-2. Replace large text labeled buttons with small icon buttons, add tool-tips.  Streamline buttons.
+2. Replace large text labeled buttons with small icon buttons with tool-tips.  Streamline buttons.
 3. Design more fluid navigation.
-4. How to upload, store, display, delete Customer driving license and Vehicle pictures.
+4. Upload, store, display, delete Customer driving license and Vehicle pictures.
 5. Generation of invoice.
 
 
 
+https://bezkoder.com/spring-boot-upload-file-database/
