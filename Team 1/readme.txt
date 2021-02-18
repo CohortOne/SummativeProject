@@ -1,40 +1,106 @@
-Project utilized these Spring Boot features:
+carDate.zip
+2021-02-12:
+Hi all, the previous version was not tested and have errors.  Please use this version:
 
-1. security, so that users are created, with encrypted password, and multi-roles, which are validated in the application.
-2. Use of request attributes (Model model.get/setAttributes)
-3. Use of session attributes (Session session.get/setAttributes)
-4. Use of session attributes to simplify the .html pages while maintaining session persistenance.
+1: Added common.html, which contains declaration of common header, navigation bar, and footer to be included in selected pages.
+2. Added home.html as the landing page for all users.
+3. Revised table ROLE so as to make use of spring security5 tags on html pages to selectively show shortcuts base on user roles.
+   - all roles must be renamed to ROLE_xxxxx for the framework to work.
+4. Added thymeleaf navigation bar to home and Employee pages, show and hide base on user ROLES.
+5. Revised sql_scipts.
+6. Coded Customer and Vehicle POJO
+7. Coded CustomerController and Customers.html.
+
+Encountered one problem:
+Customer.class uses custId as @Id, and it store customer contact details.
+To capture an alternate contact for each customer, the attribute "private Customer custLinked;" is added to "public class Customer", 
+with these code:
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "CUSTIDLINK", nullable = true)
+    private Customer custLinked;
+which resulted in the column CUSTIDLINK created in Oracle table CUSTOMER.
+
+Let's say custA has custB as custLinked, and custB have custC as custLinked, then when custC is to be updated with custA as custLinked,
+the app will crash with stack overflow error.  It seesm to me that as the update creates a ring strcuture, when Spring Framework loads custA,
+it continues to load custB as custLinked, while custB loads custC as custLinked, and custC loads custA as custLinked, and this went into
+a endless loop.
+
+I checked the FetchType, you only have EAGER and LAZY.  Even after I changed it to LAZY, the same problem presists.
+
+I have brought this up with Simon.
+
+In the meantime, may proceed to code Vehicle.html and VehicleController.java similar to Customer.
+
+This problem was eventually traced to the toString() methods of the pojo.
+
+Customer.toString() apart from printing class attributes, also print the Customer referred to by CustLinked.  CustLinked is a Customer itself, so
+on printing it will also try to prints its CustLinked, and thus resulted into an endless loop.  Besides, such endless loop, another problem
+likely to occur is attemting to print CustLinked.custName where CustLinked itself is null.
+
+Problem resolve, 2021-02-14.
+
+
+ 
+carDate 02-13.zip
+2021-02-13:
+1. Vehicle.java: Added attribute dailyRate with getter and setter, generated toString().
+2. VehStatus.java: Added getters and setters, generated constructor and toString().
+3. Vehicle: added VehStatus Repository and VehicleController.
+4. Vehicles.html: added web page for Vehicles maintenance.
+5. Customers.html: added ability to display pinned vehicle.
+
+
+carDate 02-14.zip
+2021-02-14:
+1. Customer.java: 
+   = added methods to add and remove Hire.
+   = toString to not print custLinked (which is the cause of stack overflow error),
+   = change FetchType back to EAGER.
+2. Hire.java: Corected some mistakes, enriched into a POJO.
+3. Added HireDao, HireRepo, HireDaoImpl, and HireController, and Hires.html to maintain Hires.
+4. Vehicle.java: added OnToMany relation to track hire history.
+5. Customers.html: revisions to fix various problems.
+6. Vehicles.html: revisions to fix various problems.
+7. sql_script to adapt to database changes.
+
+Application is now able to maintain Employees, Customers, Vehicles, and Hires.
+More enhancement needed on Navigation, and fee computation automation.
 
 
 
-2021-01-29 add @EnableJdbcHttpSession
-change from Copy (4) to use session attributes instead of model attributes to simplify url coding in html.
+carDate 02-15.zip
+2021-02-15:
+1. Hire.java: added DailyRate for hire fee computation.  This is because Vehicle.dailyRate may be updated while a Vehicle is on hire. The old rate should be used for that hire.
+2. HireController: added function to Hire and Return vehicles, and function to compute hire fee.
+3. VehicleController.java: Catch database save/update exception to display error message to user.
+4. CustomerController.java: Catch database save/update exception to display error message to user.
+5. BusinessConfig.java: added effective date and extra-time surcharge.  This class is not in use yet.
+6. 4 .html, general enhancement.
+7. sql_script to adapt to database changes.
+
+2021-02-17:
+1. Controllers and htmls: Employees/Customers/Vehicles/Hires fix a page navigation error common to all pages.
+2. Customer.html: move some buttons around, Added tool-tips for Alt-contact buttons.
+3. Customer.html, CustomerController: correct an error in the url for Alt-contact maintenance buttons.
+4. sql_scripts: added script to genearate some test data for customers.
+5. HireController: Correct method to delete Hire.
+
+2021-02-18:
+1. common.html, and all Controllers: added session attributes currFunc and keyword, selective display of sessions attributes relevant to currFunc.
+2. Customers.html: converted most buttons into fa icons [https://fontawesome.com/v4.7.0/icons/].
+3. Customers.html, CustomerController:
+   - Added input and apply/clear keyword to filter displayed customers.
+4. CustomerRepo, CustomerDao, CustomerDaoImpl, CustomerController: added codes to support filter.
+
+Application is now able to fully function.
+Further enhancement needed:
+1. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
+2. Large text labeled buttons in Customer.html replaced with small icon buttons.  Continue to do the same for the other four htmls.
+3. Find ways to create tool-tips for small icons.  Continue to beantify buttons.
+4. Design more fluid navigation.
+5. Upload, store, display, delete Customer driving license and Vehicle pictures.
+6. Generation of invoice.
 
 
-2021-02-02 Enable User -> USers_Roles <- Role
-Allow maintenance of multiple user roles, and Bcrypt password hashig.
-Breakdown into multiple packages.
-Change oneBank.Customer package to also use more session attributes.
 
-2021-02-03
-Trying...
-Add Oauth2 (authentication by social app)
-
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-oauth2-client</artifactId>
-			
-Added statistical data graphics.
-
-2021-02-04
-Added Accounts object and page.  Successfully displayed/captured Customer name and account type in Account maintenance screen 
-using ONE-to-MANY relationship.
-
-2021-02-05
-Rectified a problem with the return and saving of Account.AcctType.
-Added Swagger.
-
-Added unique=true annotation to Customer.Nric to check for alternative unique key.
-
-
-2021-02-08
-Try to add Ajax feature to prompt for user confirmation before a update takes place.
+https://bezkoder.com/spring-boot-upload-file-database/
