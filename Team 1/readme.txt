@@ -67,7 +67,6 @@ Application is now able to maintain Employees, Customers, Vehicles, and Hires.
 More enhancement needed on Navigation, and fee computation automation.
 
 
-
 carDate 02-15.zip
 2021-02-15:
 1. Hire.java: added DailyRate for hire fee computation.  This is because Vehicle.dailyRate may be updated while a Vehicle is on hire. The old rate should be used for that hire.
@@ -78,6 +77,7 @@ carDate 02-15.zip
 6. 4 .html, general enhancement.
 7. sql_script to adapt to database changes.
 
+carDate 02-17.zip
 2021-02-17:
 1. Controllers and htmls: Employees/Customers/Vehicles/Hires fix a page navigation error common to all pages.
 2. Customer.html: move some buttons around, Added tool-tips for Alt-contact buttons.
@@ -85,6 +85,7 @@ carDate 02-15.zip
 4. sql_scripts: added script to genearate some test data for customers.
 5. HireController: Correct method to delete Hire.
 
+carDate 02-18.zip
 2021-02-18:
 1. common.html, and all Controllers: added session attributes currFunc and keyword, selective display of sessions attributes relevant to currFunc.
 2. Customers.html: converted most buttons into fa icons [https://fontawesome.com/v4.7.0/icons/].
@@ -92,14 +93,41 @@ carDate 02-15.zip
    - Added input and apply/clear keyword to filter displayed customers.
 4. CustomerRepo, CustomerDao, CustomerDaoImpl, CustomerController: added codes to support filter.
 
+
+carDate 02-19.zip
+2021-02-19:
+1. Added package carDate.pict for handling of pictures.  A new pojo is created to store pictures in the database.
+2. Customer.java: created an optional one-to-one link to Picture.java to store a picture of the custoer, understandably the driving license.
+3. application.properties: to define max upload file size
+3. Customer.html, CustomerController: modified to accomodate the upload, download, view, clear, of Customer Picture. 
+   - ability to handle max upload file size exceeded error.
+     - however, when such error occurred, the current customer record and the image file on screen will be lost, 
+	   and the server will temporaroily lost the ability to format session creation and last access date time properly on web page.
+https://bezkoder.com/spring-boot-upload-file-database/
+https://www.codejava.net/frameworks/spring-boot/spring-boot-file-upload-tutorial
+https://www.websparrow.org/spring/spring-boot-display-image-from-database-and-classpath
+
+
+
 Application is now able to fully function.
 Further enhancement needed:
 1. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
 2. Large text labeled buttons in Customer.html replaced with small icon buttons.  Continue to do the same for the other four htmls.
 3. Find ways to create tool-tips for small icons.  Continue to beantify buttons.
 4. Design more fluid navigation.
-5. Upload, store, display, delete Customer driving license and Vehicle pictures.
+5. Upload, store, display, delete Vehicle pictures.
 6. Generation of invoice.
+7. Proper presentation of pictures:
+   - Preferrable a thumbnail representing a picture to appear on Customer and Vehicle list page.
+     - on clicking the thumbnail, a modal window appears to display the picture in fullsize.
+	 - In the case of Vehicles, a prev-next buttons exist on modal window to show each pictures one at a time.
+     - A button exists on modal window to delete the picture.
+	 - A button exists on modal window to upload new picture.  In the case of Customer, uploaded new picture repalces old.
+	 - A button exists on modal window to close the modal window.
+   - If no picture is uploaded for the Customer/Vehicle, display an icon instead.
+     - on clicking the icon, the same modal window as described above appears, except that there is no current picture.
+
+
 
 
 
