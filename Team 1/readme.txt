@@ -109,23 +109,49 @@ https://www.websparrow.org/spring/spring-boot-display-image-from-database-and-cl
 
 
 
-Application is now able to fully function.
+carDate 02-20.zip
+2021-02-20:
+1. Customer.html:
+   - replacement of bootstrap.js, bootstrap.css, jquery.js
+     as per https://getbootstrap.com/docs/5.0/components/modal/
+   - remove charts/loader/js as it is not required.
+   - use of onclick="return confirm('confirmation message')" on update buttons in place of tool-tips.
+   - introduction of modal to display picture of customer driving license.
+     - on the Customer list screen, customer picture if exists is displayed as an tiny thumbnail.
+	 - on clicking the thumbnail, the picture is displayed on a modal.
+	 - on the modal is a detele button to delete the picture
+	 - clicking close button or anywhere outside of the modal closes the modal.
+2. CustomerController.java:
+   - Method/mapping custPict/{pictId} changed to retrieve specified customer picture for presentation on modal.
+   - minor fixes.
+3. CustomerDaoImpl.java:
+   - minor fix.
+4. Note, this version has a technical problem.  A temporaroily fix has been used to neutralise it.  
+   Need further investigation to identify the root cause and rectify it.
+   Details can be found in "mysterious double call of custSort.docx"
+   
+   
+These web pages were also consulted in the development of picture handling:
+https://www.pixeltrice.com/image-gallery-spring-boot-application-using-mysql-and-thymeleaf/
+https://mdbootstrap.com/docs/standard/components/modal/
+
+
+Application is  able to fully function.
 Further enhancement needed:
-1. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
-2. Large text labeled buttons in Customer.html replaced with small icon buttons.  Continue to do the same for the other four htmls.
-3. Find ways to create tool-tips for small icons.  Continue to beantify buttons.
-4. Design more fluid navigation.
-5. Upload, store, display, delete Vehicle pictures.
-6. Generation of invoice.
-7. Proper presentation of pictures:
-   - Preferrable a thumbnail representing a picture to appear on Customer and Vehicle list page.
-     - on clicking the thumbnail, a modal window appears to display the picture in fullsize.
-	 - In the case of Vehicles, a prev-next buttons exist on modal window to show each pictures one at a time.
-     - A button exists on modal window to delete the picture.
-	 - A button exists on modal window to upload new picture.  In the case of Customer, uploaded new picture repalces old.
-	 - A button exists on modal window to close the modal window.
-   - If no picture is uploaded for the Customer/Vehicle, display an icon instead.
-     - on clicking the icon, the same modal window as described above appears, except that there is no current picture.
+1. Handling of pictures on modal
+   - To add prev and next buttons on modal to display multiple pictures, as in the case for Vehicles.
+   - To add a button to modal window to upload new picture.  In the case of Customer, uploaded new picture repalces old.
+   - If no picture exists for a Customer/Vehicle:
+     - on the customer/vehicle list screen, to display an icon instead.
+     - on clicking the icon, the modal window appears, except that there is no current picture
+	 - user can upload pictures on modal window.
+	 - once that is done, the picture upload feature should be removed from Customer/Vehicle list screen.
+2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
+3. Consider making use of the search dialog on the navigation bar in place of filter.
+4. Large text labeled buttons in Customer.html replaced with small icon buttons.  Continue to do the same for the other four htmls.
+5. Continue to use onclick="return confirm('xxx')" as tool-tips for small icons.  Continue to beantify buttons.
+6. Design more fluid navigation.
+7. Generation of invoice.
 
 
 
