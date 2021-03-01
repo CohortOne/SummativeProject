@@ -135,9 +135,9 @@ https://www.pixeltrice.com/image-gallery-spring-boot-application-using-mysql-and
 https://mdbootstrap.com/docs/standard/components/modal/
 
 
-   
+
 carDate 02-22.zip
-2021-02-222:
+2021-02-22:
 1. Latest implemetation of the handling of Customer pictures of driving license on modal:
    - On the Customer list screen, customer picture if exists is displayed as an tiny thumbnail.
      If there is no picture, an icon is displayed instead.
@@ -150,6 +150,23 @@ carDate 02-22.zip
    in the modal in n Customers.html.
 4. Customer.html, Vehicles.html: use of class="" to color tables.   
    
+
+
+
+carDate 03-01.zip
+2021-03-01:
+1. CustomerController.java: 
+   - Added method to un-pin Vehicle. This function was overlooked earlier.
+2. Hires.html:
+   - added button to invoke generation of invoice in PDF format.
+3. HiresController.java:
+   - added method to generate invoice in PDF format.
+   - enhanced method computeFee to add billing details to the PDF invoice.
+4. pom.xml:
+   - added dependency for PDF generation.
+   
+
+
 
 Application is able to fully function.
 Further enhancement needed:
@@ -190,8 +207,7 @@ Further enhancement needed:
    - TimeWarp can be introduced as BusinessConfig attribute, and be maintained only by Admin.
    - When maintaining, TimeWarp can only be increased, not decreased.
    - Upon sign-in, check this value, and alert the user that he/she is using a testing system if TimeWarp is not 0.
-11.Generation of invoice.
-12.Design more fluid navigation.
-99.Handle concurrent update.
+11.Design more fluid navigation.
+12.Handle concurrent update.
 
 
