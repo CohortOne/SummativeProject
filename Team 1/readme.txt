@@ -177,9 +177,9 @@ carDate 03-02.zip
 2. Customers.js:
    - Takes over scripts from Customers.html that causes modal to show.
    - added new ajax scripts to enabled modal to be sticky.
-   - upon upload and delete of pictures, able to modify necessary html elements to reflect the changes without reloading the entire page.
+   - upon upload and delete of pictures, modify necessary html elements to reflect the changes without reloading the entire page.
 3. UploadForm.java
-   - create to facilitate the upload of pictures using the modal.
+   - created to facilitate the upload of pictures using modal.
    - the design is inspired by the web resources: //https://o7planning.org/11813/spring-boot-file-upload-with-jquery-ajax
 4. CustomerController.java: 
    - @GetMapping("/custLink/{theCustId}"): modified to link theCustId as the alt contact of pinCust,
