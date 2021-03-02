@@ -167,13 +167,34 @@ carDate 03-01.zip
    
 
 
+carDate 03-02.zip
+2021-03-02:
+1. Customers.html:
+   - assign html element id for each pinCust and listCust picture containers so that they can be modified by JS.
+   - swap customer and alt-contact linking order.
+   - revisions to modal to facilitate functional enhancement.
+   - move <script> to Customers.js
+2. Customers.js:
+   - Takes over scripts from Customers.html that causes modal to show.
+   - added new ajax scripts to enabled modal to be sticky.
+   - upon upload and delete of pictures, able to modify necessary html elements to reflect the changes without reloading the entire page.
+3. UploadForm.java
+   - create to facilitate the upload of pictures using the modal.
+   - the design is inspired by the web resources: //https://o7planning.org/11813/spring-boot-file-upload-with-jquery-ajax
+4. CustomerController.java: 
+   - @GetMapping("/custLink/{theCustId}"): modified to link theCustId as the alt contact of pinCust,
+     instead of the reverse as before.
+   - @GetMapping("/custRmvPict/{custId}") changed to @GetMapping("/custRmvPictJs/{custId}")
+     and modified so that the picture deletion is triggered by ajax calls without re-drawing the entire html page.
+   - @PostMapping("/custSavePict") changed to @PostMapping("/custSavePictJs")
+     and modified so that the picture upload is triggered by ajax calls without re-drawing the entire html page.
+  
+
+
 
 Application is able to fully function.
 Further enhancement needed:
-1. Further enhancemnt to the handling of pictures on modal
-	- Modal should be made more sticky.  Apart from explicit Close, all other interactions between user and the modal 
-	  should return to the modal.  A certain interaction style has to be designed.  The challenge is in the coding.
-    - To extend the picture handling feature to Vehicle module.
+1. To extend the picture handling feature to Vehicle module.
 	- Vehicles can have multiple picture.  The modal has to have <prev> and <next> buttons to navigate.
 2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
 3. Consider making use of the search dialog on the navigation bar in place of filter.
