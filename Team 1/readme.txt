@@ -177,9 +177,9 @@ carDate 03-02.zip
 2. Customers.js:
    - Takes over scripts from Customers.html that causes modal to show.
    - added new ajax scripts to enabled modal to be sticky.
-   - upon upload and delete of pictures, modify necessary html elements to reflect the changes without reloading the entire page.
+   - upon upload and delete of pictures, able to modify necessary html elements to reflect the changes without reloading the entire page.
 3. UploadForm.java
-   - created to facilitate the upload of pictures using modal.
+   - create to facilitate the upload of pictures using the modal.
    - the design is inspired by the web resources: //https://o7planning.org/11813/spring-boot-file-upload-with-jquery-ajax
 4. CustomerController.java: 
    - @GetMapping("/custLink/{theCustId}"): modified to link theCustId as the alt contact of pinCust,
@@ -188,7 +188,82 @@ carDate 03-02.zip
      and modified so that the picture deletion is triggered by ajax calls without re-drawing the entire html page.
    - @PostMapping("/custSavePict") changed to @PostMapping("/custSavePictJs")
      and modified so that the picture upload is triggered by ajax calls without re-drawing the entire html page.
+
+
+carDate 03-04.zip
+2021-03-04:
+This is a minor change, as I position to roll out picture handing for Vehicle module.
+1. Customer.java
+   - corrected the relation between customer and current hire from many-to-1 into 1-to-1.
+2. HomeControllers.java
+   - removed unnecessary codes.
+3. CustomerControllers.java, EmployeeControllers.java, HireControllers.java, VehicleControllers.java
+   - Remove all hasRole method in the controllers, and changed all to refer to the one copy in HomeController.
+4. RestGlobalExceptionHandler.java, CustomerControllers.java
+   - Created RestGlobalExceptionHandler.java to trap upload file size exception error.  Mechanism not understood, but it works.
+   - The previous filesize exception method becomes obselete and is removed from CustomerControllers.java.
+5. PictureController.java, Customers.html, CustomerController.java, Customers.js
+   - PictureController.java is created to handle Pictures as it is used by both Customer and Vehicle modules, 
+     and may be later on by Employee too.
+   - PictureController.java has method and entry point pictGet{pictId} to serve picture.
+     It take over the method/entry point custGetPict{pictId}.
+   - Customers.html and Customers.js are modified to refer to the new entry point for pictures.
+   - CustomerController.java is striped of the obselete entry point custGetPict{pictId}.
+6. Vehicle.java, Vehicles.html. sql_script
+   - Corrected the relation between Vehicle and current hire from many-to-1 into 1-to-1.
+   - Added picture and pictures attribute.
+   - Added EnggCap, bhp, and topSpeed attributes
+   - Attribute picture is the profile picture of the Vehicle.
+   - Attribute pictures is a set of 0 to many pictures of the Vehicle.
+   - picture if present, is one of the Pictures in pictures.
+   - Vehicles.html has columns added for picture, engCap, bhp, abnd topSpeed.
+   - This is in preparation for the roll out of pictures capability for Vehicle.
+   - sql_scripts modified to drop one more table, and to populate Vehicle table.
+7. Customers.html:
+   - Display of pinVeh is now on a standalone table, instead of embedded in one row of the Customer table.
+   - Added title= as tool-tips, and onclick=return confirm() to customer activation/deactivation for pinCust as well as listCusts.
+   - enable pinVeh from pinCust and listCusts if the customer has a current Hire.
+   - Added title= as tool-tips to customer edit/delete/clone for pinCust as well as listCusts.
+   - page navigation button change back to text buttons for Prev and Next.   
+7. Employees.html:
+   - Move Employee Activation/Deactivation from Actions button to the IsActive cell.
+   - Added title= as tool-tips, and onclick=return confirm() to Employee activation/deactivation.
+   - Added title= as tool-tips to Employee edit/delete/clone.
+   - page navigation button change back to text buttons for Prev and Next.
+   - Beautify some buttons
+8. Home.java
+   - Removed obselete codes.
+9. Customers.js:
+   - include script to reset the execution result message upon modal.show.
+   - use java script in-place of jquery whenever possible.
+   
   
+  
+
+Extended picture feature to Vehicle:
+1. - As a variation, vehicle pictures will be stored in file folder instead of database.
+     Pictures or any large data, are preferable stored in file servers instead of databases due to the 
+     lower unit cost of storage.
+   - Change Picture.java (thereby Picture table) to:
+     - add an optional Customer field, which points to Customer the picture belongs to.
+     - add an optional Vehicle field, which points to Vehicle the picture belongs to.
+     - add a file name field, which points to the picture file in file server.
+   - Change UploadForm.java to take in additional field to store VehId and CustId as appropriate.
+     Currently, the Id field is used to carry the CustId from modal to UploadForm.
+	 When handling Vehicle pictures, it will be necessary to also carry the PictId since Vehicles 
+	 have multiple pictures.
+   - Pictures are stored in one single folder.  Each file is named by VehId_PictId.jpg.
+     That is if file name can be over-ridden.
+   - have an additional option to store file in file system, and save the database record
+     with the file name.
+   - custGetPict method used by Customer module, to be change to handle picture request from multiple sources:
+     - from 
+
+   
+
+
+
+
 
 
 
@@ -231,4 +306,37 @@ Further enhancement needed:
 11.Design more fluid navigation.
 12.Handle concurrent update.
 
+
+
+The following will be useful for storing pictures in file system:
+public class PictureStorageService {
+
+....
+
+//	  private static String UPLOAD_DIR = "CarPhotos";
+// Save Files
+//	    private String saveUploadedFiles(MultipartFile[] files) throws IOException {
+//	 
+//	        // Make sure directory exists!
+//	        File uploadDir = new File(UPLOAD_DIR);
+//	        uploadDir.mkdirs();
+//	 
+//	        StringBuilder sb = new StringBuilder();
+//	 
+//	        for (MultipartFile file : files) {
+//	 
+//	            if (file.isEmpty()) {
+//	                continue;
+//	            }
+//	            String uploadFilePath = UPLOAD_DIR + "/" + file.getOriginalFilename();
+//	 
+//	            byte[] bytes = file.getBytes();
+//	            Path path = Paths.get(uploadFilePath);
+//	            Files.write(path, bytes);
+//	 
+//	            sb.append(uploadFilePath).append("<br/>");
+//	        }
+//	        return sb.toString();
+//	    }
+//	}
 
