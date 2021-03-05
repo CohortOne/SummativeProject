@@ -236,34 +236,44 @@ This is a minor change, as I position to roll out picture handing for Vehicle mo
 9. Customers.js:
    - include script to reset the execution result message upon modal.show.
    - use java script in-place of jquery whenever possible.
+More car pictures and details at
+https://europeluxurycars.com/rent-luxury-cars-france/nice?camp=ppc_en&gclid=CjwKCAiAp4KCBhB6EiwAxRxbpNP4cbgiOGExWYRYVpAmPg8xQc7by84gWYd7Hutr4NLJlP7lAIasPhoCJ1kQAvD_BwE
    
+carDate 03-05.zip
+2021-03-05:
+Objectives of this upgrade:
+A. Allow pictures to be stored in file system, as an additional option to storing in database.  Now, Customer pictures are stored in DB, and 
+   Vehicle pictures in file system.  Both will have database records, only the binary data of Vehicles are stored in file system using the 
+   pictId as file name.
+   Pictures or any large data, are preferable stored in file servers instead of databases due to the lower unit cost of storage.
+   Vehicle pictures are stored in one single folder.  Each file is named by pictId.
+B. To prepare for handing multiple pictures per Vehicle, one more field is added to the picture UploadForm.
+   Currently, the id field is used to hold custId.  In the new version, id field will hold pictId, and new entityId field is for custId or vehId.
+   When handling Vehicle pictures, it will be necessary to also carry the PictId since Vehicles have multiple pictures.
+Changes:
+1. Allow pictures to be stored either in database, or in file system.
+   PictureStorageService.java:
+   - able to store and delete pictures in file system as well as database.
+   PictureController.java:
+   - able to serve pictures regardless of storage medium of file or database.
+   CustomerController.java, 
+   - touch up for new picture handling
+2. Added entityId field to picture file upload form, so that PictId is also POSTed.
+   It also paves the way for handling multiple pictures for each Vehicle in the next version.
+   UploadForm.java
+   - add a new input field to hold the entityId, which is CustId if picture being uploaded belong to a Customer, or vehId for Vehicle.
+   - id field is reserved for pictId. The use of pictId allows a picture to be replaced, instead of always delete and create new one
+   Customers.js, Customers.html
+   - enhanced to use the new entityId field, and program logic correction and optimization
+   Vehicles.js, Vehicles.html
+   - replicated picture handling feature from Customer module.
+   VehicleController.java
+   - added entry points to save and remove Vehicle Pictures.
+   - modified method vehDeleOts to perform referential validations before allowing deletion of Vehicle record.
+3. EmployeeController.java, Employees.html
+   - minor touch-up: shorten Delete and Update to Dele and Upda in method names and entry point
+4. Provided driving license and car pictures in folders for your convenience.   
   
-  
-
-Extended picture feature to Vehicle:
-1. - As a variation, vehicle pictures will be stored in file folder instead of database.
-     Pictures or any large data, are preferable stored in file servers instead of databases due to the 
-     lower unit cost of storage.
-   - Change Picture.java (thereby Picture table) to:
-     - add an optional Customer field, which points to Customer the picture belongs to.
-     - add an optional Vehicle field, which points to Vehicle the picture belongs to.
-     - add a file name field, which points to the picture file in file server.
-   - Change UploadForm.java to take in additional field to store VehId and CustId as appropriate.
-     Currently, the Id field is used to carry the CustId from modal to UploadForm.
-	 When handling Vehicle pictures, it will be necessary to also carry the PictId since Vehicles 
-	 have multiple pictures.
-   - Pictures are stored in one single folder.  Each file is named by VehId_PictId.jpg.
-     That is if file name can be over-ridden.
-   - have an additional option to store file in file system, and save the database record
-     with the file name.
-   - custGetPict method used by Customer module, to be change to handle picture request from multiple sources:
-     - from 
-
-   
-
-
-
-
 
 
 
@@ -271,10 +281,23 @@ Application is able to fully function.
 Further enhancement needed:
 1. To extend the picture handling feature to Vehicle module.
 	- Vehicles can have multiple picture.  The modal has to have <prev> and <next> buttons to navigate.
+   Handling of multiple pictures for Vehicles:
+   From each set of pictures of each Vehicle, genearate a list of pictures.
+   For each picture, generate a html-DIV element.
+   <div id="pict+${pictId}" hidden="true">  each element has a unique id, and all hidden except one. When first opened, only first one visible
+    <img src="pictGet/{pictId}"> the picture is displayed within the DIV
+	<button>Prev, this button will hide current div, and unhide prev div</button>
+	<button>Dele, this button will delete current picture, and remove current div, and unhide next div</button>
+	<button>Replace, this button will repalce current picture with a new one</button>
+	<button>Next, this button will hide current div, and unhide next div</button>
+	<button>Add, this button will add a new picture, hide current div, and generate and show the div of the new picture</button>
+	<button>ProfilePct, this button makes the current picture the profile picture of the Vehicle</button>
+   </div>
+   If the set has no picture, generate one DIV to perform add picture, or some other means.
+   Remember to add methods to add and remove Vehicle pictures from set of Vehicle pictures in Vehicle.java.
+
 2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
 3. Consider making use of the search dialog on the navigation bar in place of filter.
-4. Large text labeled buttons in Customer.html replaced with small icon buttons.  Continue to do the same for the other four htmls.
-5. Continue to use onclick="return confirm('xxx')" as tool-tips for small icons.  Continue to beautify buttons.
 6. Allow employee to change own password.  
 7. Introduce a new initial menu field for Employee POJO.
    - user can change it to Administration(default), Customer, Vehicle, or Hire.
