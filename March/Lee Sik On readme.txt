@@ -3,7 +3,7 @@ Version as at March 8th deployed to Heroku.com.  Access by this URL:
 
 https://cardate.herokuapp.com/login
 
-
+sign in as sikon, password sikon
 
 The following is the development history:
 
