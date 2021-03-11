@@ -1,0 +1,9 @@
+Hello. You can access my app via the link below.
+
+https://vvs-car-rental.herokuapp.com/
+
+username: admin
+password: password123
+
+Will update this readme text when there are any changes/updates made.
+
