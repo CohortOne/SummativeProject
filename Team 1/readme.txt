@@ -275,26 +275,107 @@ Changes:
 4. Provided driving license and car pictures in folders for your convenience.   
   
 
+CarDate 03-08 Heroku.zip
+Heroku version. Deployed to Heroku.com.  The following changes were made to enable to deployment:
+1. pom.xml:
+   - It is important that java version 1.8 is used for app to be deployed in heroku:
+	 	<properties>
+			<java.version>1.8</java.version>
+		</properties>
+   - Replace:
+ 		<dependency>
+			<groupId>com.oracle.database.jdbc</groupId>
+			<artifactId>ojdbc8</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+     with:
+		<dependency>
+			    <groupId>org.postgresql</groupId>
+			    <artifactId>postgresql</artifactId>
+			    <scope>runtime</scope>
+		</dependency>
+     because heroku.com only offers postgresql for free.
+2. application.properties
+   - Replace:
+		spring.datasource.url=jdbc:oracle:thin:@localhost:1522:prod
+		spring.datasource.username=capstone
+		spring.datasource.password=capstone
+		spring.datasource.driver-class-name = oracle.jdbc.driver.OracleDriver
+		spring.jpa.database-platform=org.hibernate.dialect.Oracle12cDialect
+     with:
+		spring.jpa.properties.hibernate.hdbc.lob.non_contextual_creation=true
+		spring.datasource.initialization-mode=always
+   - Replace:
+		#server.port=8081
+     with:
+		server.port=${PORT:8081}  -- this is for heroku deployment
+3. data.sql
+   - data.sql (has to be created next to application.properties)
+     Put in here the necessary sql statements to create the initial database records.
+	 Those are currently found in src\sql_scripts, with some syntax and keywords changes:
+	 NUMBER change to NUMERIC
+	 VARCHAR2(100 CHAR) change to VARCHAR(100)
+	 BLOB change to BYTEA
+	 1 for boolean true change to TRUE
+4. PictureStorageService.java
+   - replace isBlank() with isEmpty().  isBlank() not allowed in Heroku.com.
 
+
+	 
+
+carDate 03-11.zip
+With respect to carDate 03-05:
+A. Heroku related.  These changes were needed when the app was deployed to heroku on Mar 8th base on Mar 5th verion. 
+   Refer to above CarDate 03-08 Heroku.zip for details.
+1. pom.xml:
+2. application.properties
+   - added some lines for Heroku PostGreSQL, but commented out.
+3. data.sql
+4. PictureStorageService.java
+   
+B. Bug fixes and non-essential optimizations.
+1. common.html
+   - Reformatted so it is closer to the original state as when given by the instructor in Feb.
+   - to print pictsVehId, which is the Vehicle that is having its pictures maintained.
+2. PictureStorageService.java
+   - Delete a database record of a picture before deleting the physical file.  Then if the picture is associated with other objects
+     and deletion is not successful, then the physical file is also not deleted.
+3. Home.java
+   - changed home to Home as home.html has earlier on been renamed to Home.html.
+4. Customers.html
+   - comment out included scripts, as they are already placed in common.html.
+   - added feature to pre-view uploaded picture.
+5. Customers.js
+   - added listener to reset the picture upload form when modal is closed.
+   - added script to clear thumbnail (preview uploaded picture) upon completion of update.
+   - minor revisions.
+
+D. Main enahncement: developed multi-picture handling for Vehicles using modal format.   
+1. Vehicle.java
+   - add methods addPicture() and removePicture().
+1. Vehicles.html
+   - comment out included scripts, as they are already placed in common.html.
+   - added modall to allow preview and maintenance of Vehicle pictures.  
+     This module differ from Customers module as multiple pictures are allowed here.
+     When user decided to look at pictures of a selected Vehicle, the vehId is first sent to the controllers
+	 to load up all the pictures.  When the html page returns to the browser, modal is shown by embedded trigger.
+	 This is different from Customers module where the trigger is by user clicking a button without going go the controller.
+2. Vehicles.js
+   - new java scripts necessary for the handling of Vehicle pictures.
+   - functions inclde: add a picture, delete a picture, replace a picture, and set a picture of the profile picture of the vehicle.
+   - a technical limitation prevents buttons from being created to newly added pictures.  See the comments
+     in method ajaxSubmitAdd().
+3. VehicleController.java
+   - Added methods for picture handling base on ajax mode.
+   
+   
+   
+   
 
 Application is able to fully function.
 Further enhancement needed:
-1. To extend the picture handling feature to Vehicle module.
-	- Vehicles can have multiple picture.  The modal has to have <prev> and <next> buttons to navigate.
-   Handling of multiple pictures for Vehicles:
-   From each set of pictures of each Vehicle, genearate a list of pictures.
-   For each picture, generate a html-DIV element.
-   <div id="pict+${pictId}" hidden="true">  each element has a unique id, and all hidden except one. When first opened, only first one visible
-    <img src="pictGet/{pictId}"> the picture is displayed within the DIV
-	<button>Prev, this button will hide current div, and unhide prev div</button>
-	<button>Dele, this button will delete current picture, and remove current div, and unhide next div</button>
-	<button>Replace, this button will repalce current picture with a new one</button>
-	<button>Next, this button will hide current div, and unhide next div</button>
-	<button>Add, this button will add a new picture, hide current div, and generate and show the div of the new picture</button>
-	<button>ProfilePct, this button makes the current picture the profile picture of the Vehicle</button>
-   </div>
-   If the set has no picture, generate one DIV to perform add picture, or some other means.
-   Remember to add methods to add and remove Vehicle pictures from set of Vehicle pictures in Vehicle.java.
+1. To enhance picture handling of Vehicle module.
+	- Vehicles  have multiple picture.  The modal has to have <prev> and <next> buttons to navigate, or use Carousel.
 
 2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
 3. Consider making use of the search dialog on the navigation bar in place of filter.
@@ -329,37 +410,4 @@ Further enhancement needed:
 11.Design more fluid navigation.
 12.Handle concurrent update.
 
-
-
-The following will be useful for storing pictures in file system:
-public class PictureStorageService {
-
-....
-
-//	  private static String UPLOAD_DIR = "CarPhotos";
-// Save Files
-//	    private String saveUploadedFiles(MultipartFile[] files) throws IOException {
-//	 
-//	        // Make sure directory exists!
-//	        File uploadDir = new File(UPLOAD_DIR);
-//	        uploadDir.mkdirs();
-//	 
-//	        StringBuilder sb = new StringBuilder();
-//	 
-//	        for (MultipartFile file : files) {
-//	 
-//	            if (file.isEmpty()) {
-//	                continue;
-//	            }
-//	            String uploadFilePath = UPLOAD_DIR + "/" + file.getOriginalFilename();
-//	 
-//	            byte[] bytes = file.getBytes();
-//	            Path path = Paths.get(uploadFilePath);
-//	            Files.write(path, bytes);
-//	 
-//	            sb.append(uploadFilePath).append("<br/>");
-//	        }
-//	        return sb.toString();
-//	    }
-//	}
 
