@@ -2,8 +2,36 @@ Hello. You can access my app via the link below.
 
 https://vvs-car-rental.herokuapp.com/
 
+To login to admin acc:-
+
 username: admin
 password: password123
 
+Info:-
+
+To start the renting process, you can either click the [Rent] button in dashboard or go to the Customers page and click on [Proceed] on whichever customer that you are renting for. Then select the vehicle and click [Rent].
+
+To return the vehicle, either click the [Return] button in the dashboard or go to the Hire Details Page to return the vehicle. Once returned, the invoice button will appear on the Hire Details Page. Click that to create an invoice. 
+
+In the invoice page, you can print/update the invoice. 
+
+Uploading of images:-
+
+NRIC screenshot can be uploaded via the customer form.
+It can be viewed when you click on the NRIC no in the customer page.
+
+Vehicle Images can be uploaded via the vehicles page (click on the upload images button)
+Images can be viewed on the vehicles page when you click on the registration no. 
+
+
+Note:-
+
 Will update this readme text when there are any changes/updates made.
+
+
+Update:-
+
+17/03/21
+Added Vehicle Images upload to an online file storage (imgur). Able to view photos in Vehicles page(when you click on the registration number)
+Modal box will pop up and show a carousel of the car images.
 
