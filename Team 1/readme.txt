@@ -369,14 +369,156 @@ D. Main enahncement: developed multi-picture handling for Vehicles using modal f
    - Added methods for picture handling base on ajax mode.
    
    
+
+
+carDate 04-05.zip
+With respect to carDate 03-11:
+A: Creation of package cfg to handle BusinessConfig:
+1. BusinessConfig.java
+   This class was relocated to package carDate.cfg, and underwent major major changes.
+   It is used to maintain application wide settings.
+2. BusinessConfigDao.java, BusinessConfigDaoImpl.java, BusinessConfigRepo.java:
+   These three are standard interface/classes to handle the POJO.
+3. BusinessConfigs.html, BusinessConfigController.java:
+   Allow only Admin to maintain BusinessConfig.
+   The controller handles the display, maintenance, and delete of BusinessConfig records.
+
+B: To allowing warping of clock.
+   * As a means of business process control to prevent fraud, the time of vehicle hiring and return are checked against
+     the hardware clock of the server, and a certain deviation (such as 30 minutes) is allowed.  This is to prevent users from
+	 say, backd-dating the return date time of a Hire and thus waive the excess charge.
+   * However, this feature makes it difficult to conduct testing, as tester will have to wait for hours and days to conduct a testing
+     as test scripts will likely span multiple days.
+   * To facilitate testing, a time warping is built into the application, so that the testing team and manipulate the progression of date/time
+     in the test environment.
+   * This feature has to be disabled in production environment.  The mechanism of disabling will be designed and built later.
+1. BusinessConfig.java:
+   Contains the attributes offsetDays and offsetHours.
+   In production environemnt, both values are 0.
+   In test environemnt, they can be non-zero.
+   The number of days and hours offset are added to the date/time as obtained from the hardware clock to obtain an applicate date/time.
+   Since both offsets are 0, production date/time will always be the same as the hardware clock.
+   In test environment, test team can manipuate the values to fast-track the date time forward to complete a test script.
+2. Home.java
+   * A new method homeClock() is added to replace direct look up to java.time.LocalDateTime.now().
+     This method does obtain hardware date/time from java.time.LocalDateTime.now().  However, it adds 
+     offsetDays and offsetHours as obtained from current BusinessConfig to obtain a warped date/time and return to the caller.
+   * As application administrator is allowed to set-up BusinessConfig changes with future effective date, this method has a built-in
+     mechanism to detect if the effective date has arrived and if so, automatically apply and use the config changes.
+   * In addition, another method homeClockJs is added to return the warped date/time to a webpage via AJAX calls.
+3. CustomerController.java, HireController.java,    
+   Replace all calls to java.time.LocalDateTime.now() with homeClock();
+4. common.html, Customers.html, Employees.html, Hires.html, Home.html, Vehicles.html:
+   Added html and js to display the warped date/time as obtained via AJAX calls.
+   
+C: Config related to fees computation be incorporated into Hire.java so that they are fixed as at hire time, 
+   and not be affected by config changes made after that.
+1. Hire.java:
+   * 6 settings from BusinessConfit that affect the hiring fee computation are incorporated into Hire.java.  Those values are populated from
+     the then BusinessConfig, and will not change even if BusinessConfig is modified after hiring started.
+   * @NumberFormat(pattern = "#,###.00") annotation added to three monetary amount fields to make their display on html page nicer.
+2. HireController.java
+   * when a Hire is started, six fee related values from populated from BusinessConfig into Hire.
+   * Those values are then used for fees computation.  The same values will be used when the Vehicle is returned.
+3. Hires.html
+   * Use annotation "${#numbers.formatCurrency(hire.xxxxxx)}" to four amount fields for nicer display.
+   
+   
+D: Misc
+1. sql scripts.
+   As BusinessConfig.java has been modified, scripts are added to set-up the two initiate BusinessConfig records.
+2. Vehicles.js:
+   Rearranged the codes for better readability.
+3. common.html
+   Comment out session variables dump.  Those are needed during the early stage of coding.
+   They are commented out instead of deleted so that they can be recalled if needed.
+4. Customers.html, Employees.html, Hires.html, 
+   Use <tr th:if="${#fields.hasErrors('*')}"> so that the entire is not rendered if there has been no error.
+5. Vehicles.html
+   * Modified to display vehicle brand and model and vehicle license plate number on the modal.
+   * shorten the names of three buttons. done in conjunction with Vehicles.js.
+   
+
+More detailed documentation on BusinessConfig.java
+
+Create BusinessConfig.java
+1.  There is always a root.config of configId = 1, which contains the current configuration.
+    There is always a master.config, of which the configId is stored in root.config.prevId and has the same config data as root.config.
+    These two records are created with initialization sql scripts.
+    If either or both of the two records do not exist, the application cannot start properly.
+2.  During a maintenance:
+    * master.config is loaded for editing,
+	* master.config.nextId contains the id of an optional next.config.
+    * next.config if exist is also loaded, if not exist, will be created same as master.config but with configId=0
+    * both records shown side by side, only next.config can be edited:
+        |master.config      |next.config
+      * |id                 |
+	    |as per the record  |as per the record, id=0 if not exist
+	  * |effective date     
+	    |as per the record  |as per the record, use current.date if not exist, can be edited to equal or greater than curret.date
+		|                   | current.date means the hardware clock with days and hours offset from master.config applied.
+	  * |days/hours offset
+        |as per record      |as per record, same as master.rec if not exist, can be incremented.
+	  * |other config data
+        | as per record     |as per record, same as master.rec if not exist
+3.  At the end of maintenance when user clicks Save:
+    * if there is no difference between master.config and next.config:
+	  * delete next.config if it is in database.
+	  * update master.config.nextId to 0.
+    * if there is any difference between master.config and next.config:
+	  * save next.config to database (create if it is new)
+	  * update master.config.nextId to next.config.configId.
+	  * call method home.homeClock() to obtain current application date/time, so as to trigger an update (refer below).
+4.  Whenever the application requires to retrieve the current application date/time, it calls the method home.homeClock().
+    * home.homeClock() will perform the following:
+      1. get the hardware clock.
+      2. get root.config, from there obtain the days and hours offset.
+      3. apply days and hours offset to obtain application date/time.
+	  4. if root.config.nextId = 0, meaning there is no pending next.config to apply, 
+	     * return the application date/time.
+	  5. load master.config and next.config.  Check application date/time against next.config.effectiveDate:
+	  6. if application date/time is after next.config.effectiveDate, meaning not yet reached the date to apply next.config:
+	     * return the application date/time.
+	  7. now that effective data of next config has reached, apply next config:
+	     * copy next.config to root.config
+ 		 * update master.rec.nextId = 0, and master.rec.prevId = next.config.configId.
+		   This effectively pushes master.config into history, makes next.config the new master.config, and eliminates next.config.
+		 * recompute current application date/time by getting the hardware clock and apply days and hours offset from the new master.config.
+	     * return the application date/time.
+      One should note that it is possible to have more than one config record with the same effective date if configuration is changed multiple times in a day.
+5.  User can also delete future.rec.
+	* Delete next.config if any.
+	* Update root.config and master.config to have nextId = 0.
+6.  The following illustrate the life cycle of config records:
+   id previd nextid config data
+   -- ------ ------ ------------  These two records are created at application set-up:
+    1      2      0 verion 1         root.config, contains current config, and a pointer to master.config, which has the same config data
+    2      0      0 verion 1         master.config, which contains the current config.
+   -- ------ ------ ------------  User added a forward dated next.config:
+    1      2      3 verion 1         root.config updated to point to next.config
+    2      0      3 verion 1         master.config updated to point to next.config
+	3      2      0 verion 2         a new forward dated config is added, and it points to master.config as its previous config.
+   -- ------ ------ ------------  when the forward effective date arrives, next.config is applied:
+    1      3      0 verion 2         root.config updated to point to new master.config
+    2      0      3 verion 1         the original master.config has become a historical record, with its nextId pointing to the master.config that replaces it.
+	3      2      0 verion 2         the forward date has arrived, next config has been appointed master.config, and its data applied to root.config
+   -- ------ ------ ------------  it is also possible to add a next.config to be immediately effective:
+    1      4      0 verion 3         root.config updated to point to new master.config which is effective immediately
+    2      0      3 verion 1         no change to the historical record.
+	3      2      4 verion 2         Original master.config has become yet another historical record, with its nextId pointing to the master.config that replaces it.
+	4      3      0 verion 3         new config is created, and applied to root and master with immediate effect
+   -- ------ ------ ------------
+
+
+   
+   
    
    
 
 Application is able to fully function.
 Further enhancement needed:
 1. To enhance picture handling of Vehicle module.
-	- Vehicles  have multiple picture.  The modal has to have <prev> and <next> buttons to navigate, or use Carousel.
-
+	- Vehicles  have multiple picture.  The modal to have <prev> and <next> buttons to navigate, or use Carousel.
 2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
 3. Consider making use of the search dialog on the navigation bar in place of filter.
 6. Allow employee to change own password.  
@@ -386,28 +528,16 @@ Further enhancement needed:
    - upon sign-in, the first screen will depend on this setting.
    - if initial menu is not amongst user roles, dislay administration (show user personal details) instead.
    - So all together, users can change own password and own initial menu.
-8. Implement BusinessConfig.java, which has to be stored in the database.
-   - Multiple BusinessConfig record can exist in database, each with a different effective date.
-   - Allow Manager/Admin to maintain BusinessConfig.
-   - BusinessConfig of past date cannot be changed.
-   - only BusinessConfig of effective date today or after can be added.
-   - only BusinessConfig of effective date in the futurcan be modified.
-   - modify hire fee calculation and other relevant functions to use this table.
 9. Generate charts for Cars utilization. 
    a. Cars not generating income for last <x> days, 
    b. Cars with utilization below <y>% for the last <z> days.
    c. Average daily utilization (hours rented / 24) of the last <n> days, by Car and overall.
    d. Income generated in the last <n> days, by Car and overall.
    e. Percentage of early, on-time, late return of Cars in the last <n> days.
-10.Test mode clock.
-   - All reference to "java.time.LocalDate.now()" to be centralised into one method.
-   - the method will look for a TimeWarp.
-   - TimeWarp must be 0 in production mode, but can be adjusted in test mode.
-   - the method will reutrn java.time.LocalDate.now() + TimeWarp to the caller who will use it as if it is the clock.
-   - TimeWarp can be introduced as BusinessConfig attribute, and be maintained only by Admin.
-   - When maintaining, TimeWarp can only be increased, not decreased.
-   - Upon sign-in, check this value, and alert the user that he/she is using a testing system if TimeWarp is not 0.
+10.Test mode clock - time Warp
+   - Upon sign-in, check TimeWarp, and alert the user that he/she is using a testing system if TimeWarp is not 0.
 11.Design more fluid navigation.
 12.Handle concurrent update.
 
-
+   
+   
