@@ -56,11 +56,11 @@ carDate 02-14.zip
    = added methods to add and remove Hire.
    = toString to not print custLinked (which is the cause of stack overflow error),
    = change FetchType back to EAGER.
-2. Hire.java: Corected some mistakes, enriched into a POJO.
+2. Hire.java: Corrected some mistakes, enriched into a POJO.
 3. Added HireDao, HireRepo, HireDaoImpl, and HireController, and Hires.html to maintain Hires.
-4. Vehicle.java: added OnToMany relation to track hire history.
-5. Customers.html: revisions to fix various problems.
-6. Vehicles.html: revisions to fix various problems.
+4. Vehicle.java: added OneToMany relation to track hire history.
+5. Customers.html: revised to fix various problems.
+6. Vehicles.html: revised to fix various problems.
 7. sql_script to adapt to database changes.
 
 Application is now able to maintain Employees, Customers, Vehicles, and Hires.
@@ -83,7 +83,7 @@ carDate 02-17.zip
 2. Customer.html: move some buttons around, Added tool-tips for Alt-contact buttons.
 3. Customer.html, CustomerController: correct an error in the url for Alt-contact maintenance buttons.
 4. sql_scripts: added script to genearate some test data for customers.
-5. HireController: Correct method to delete Hire.
+5. HireController: Corrected method to delete Hire.
 
 carDate 02-18.zip
 2021-02-18:
@@ -510,24 +510,50 @@ Create BusinessConfig.java
    -- ------ ------ ------------
 
 
-   
-   
-   
+Used ajax to obtain application date/time to display on html page.
+The following are read-up about ajax.
+https://api.jquery.com/jquery.ajax/
+
+carDate 04-12
+1. BusinessConfigController.java
+   Security setting to allow MANAGER on top of ADMIN to maintain BusinessConfig.
+2. Employee, Customer, Vehicle, Hire: 
+   .html and controller.java modified to set page size using drop-down menu, and removed the session variable NextPageSize.
+3. Customer and Vehicle and Hire
+   Modified ~s.html, ~Dao.java, ~DaoImpl.java, and ~Repo.java so that they can filter out Customers/Vehicles/Hire that has no current Hire or are not current Hire.
+4. Customers.html, CustomerController.java, Customers.js
+   * Changed MODAL.show approach to follow that of Vehicles, so as to be consistent and less tricky.
+5. Vehicles.html, VehicleController.java
+   * Add feature to enter keyword to filter Vehicle records displayed on html page.
+6. Employee.java, EmployeeController.java, Home.java, Employees.html, Home.html
+   * allow user to change own password.
+   * Introduce a new initial menu field for Employee POJO.
+     - user can change it to home(default, view and maintain own initial menu and password), Customer, Vehicle, Hire, Employee, Configurations.
+     - user cannot change to a menu he/she is not given the role to access.
+     - upon sign-in, the first screen will depend on this setting.
+     - if initial menu is not amongst user roles, dislay home page (show user personal details) instead.
+7. HireController.java, HireDao.java, HireDaoImpl.java, HireRepo.java, Hires.html
+   * enable listing of Hires only for specific Customer or specific Vehicle.
+   * enforce placement of deposit at time of Hiring.
+   * format currency amounts nicely on Hires.html.
+8. VehicleController.java, Vehicles.js
+   * when adding a Picture to a Vehicle that has no pictures, automatically designate that picture as the profile picture.
+9. 403.html
+   * to put in the navigation bar and make the page more consistent with the general layout.
+10. BusinessConfigs.Html
+    Corrected a typo mistake where GracePeriod is coded twice.
+11. common.html
+    * Switch bootstrap.min.css from https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2 to https://stackpath.bootstrapcdn.com/bootstrap/4.3.1
+	* simplified the navigation bar.
+12. common.html,
+    * maintain and display a application test date/time, which can be manipulated to facilitate testing.
+	
    
 
 Application is able to fully function.
 Further enhancement needed:
 1. To enhance picture handling of Vehicle module.
-	- Vehicles  have multiple picture.  The modal to have <prev> and <next> buttons to navigate, or use Carousel.
-2. Filter implemented for Customer.  To further apply the same for Employees, Vehicles, and Hires.
-3. Consider making use of the search dialog on the navigation bar in place of filter.
-6. Allow employee to change own password.  
-7. Introduce a new initial menu field for Employee POJO.
-   - user can change it to Administration(default), Customer, Vehicle, or Hire.
-   - user cannot change to a menu he/she is not given the role to access.
-   - upon sign-in, the first screen will depend on this setting.
-   - if initial menu is not amongst user roles, dislay administration (show user personal details) instead.
-   - So all together, users can change own password and own initial menu.
+	- Vehicles have multiple picture.  The modal to have <prev> and <next> buttons to navigate with Carousel.
 9. Generate charts for Cars utilization. 
    a. Cars not generating income for last <x> days, 
    b. Cars with utilization below <y>% for the last <z> days.
@@ -536,8 +562,8 @@ Further enhancement needed:
    e. Percentage of early, on-time, late return of Cars in the last <n> days.
 10.Test mode clock - time Warp
    - Upon sign-in, check TimeWarp, and alert the user that he/she is using a testing system if TimeWarp is not 0.
-11.Design more fluid navigation.
 12.Handle concurrent update.
+
 
    
    
