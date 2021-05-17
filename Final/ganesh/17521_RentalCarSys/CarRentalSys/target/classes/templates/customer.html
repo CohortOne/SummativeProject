@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<div th:replace="common :: header"></div>
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"></link>
+
+
+<title>List Customers</title>
+
+</head>
+<body>
+	<div th:replace="common :: navbar"></div>
+
+	<div class="container text-center">
+
+		<div>
+			<h1 mb-5>Customers List</h1>
+
+			<div>
+
+				<table class="table table-bordered mydatatable" id="table" border=1 >
+					<thead class="thead-light">
+						<tr>
+							<th>Customer Id</th>
+							<th>Name</th>
+							<th>NRIC</th>
+							<th>DOB</th>
+							<th>Email</th>
+							<th>Phone No</th>
+							<th>Address</th>
+							<th>City</th>
+							<th>Status</th>
+							<th>Last Updated On</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<th:block th:each="customer : ${listcust}">
+							<tr>
+								<td>[[${customer.custId}]]</td>
+								<td>[[${customer.custName}]]</td>
+								<td>[[${customer.nric}]]</td>
+								<td>[[${customer.dob}]]</td>
+								<td>[[${customer.custEmail}]]</td>
+								<td>[[${customer.custPhoneNo}]]</td>
+								<td>[[${customer.address}]]</td>
+								<td>[[${customer.city}]]</td>
+								<td>[[${customer.custStatus}]]</td>
+								<td>[[${customer.lastUpd}]]</td>
+								<td><div class = "container"><a class="btn btn-primary btn-sm m-1"
+									th:href="@{'/UpdateCust/' + ${customer.custId}}">Update </a> <a
+									class="btn btn-danger btn-sm delBtn "
+									th:href="@{'/deleteCust/' + ${customer.custId}}">Delete </a></div></td>
+							</tr>
+						</th:block>
+					</tbody>
+				</table>
+			</div>
+			<a th:href="@{/newCustomerReg}">New Customer Form</a>
+		</div>
+	</div>
+	<div class="modal fade" id="deleteModal" data-backdrop="static"
+		data-keyboard="false" tabindex="-1"
+		aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteModalLabel">Delete Record</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<div class="alert alert-danger" id="main"></div>
+
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Keep</button>
+
+					<a class="btn btn-danger" href="" id="delRef">proceed </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="common :: footer"></div>
+	<script
+		src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"
+		type="text/javascript"></script>
+	<script>
+$('.mydatatable').DataTable();
+</script>
+
+	<script src="../static/js/main.js" th:src="@{js/main.js}"
+		type="text/javascript"></script>
+</body>
+</html>

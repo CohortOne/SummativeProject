@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Return Booking Page</title>
+</head>
+<div th:replace="common :: header"></div>
+<body>
+<div th:replace="common :: navbar"></div>
+
+<div class="container text-center"> 
+<H2> Return Car Form</H2>
+
+		<span style="color:red" class="message" th:text="${optMsg} ?:_"></span>	
+<form th:action="@{/booking/saveReturn/}" th:object="${listBooking}" method="post">
+<Input type="hidden"  th:field="*{bookId}" th:value="${listBooking.bookId}" readonly />
+
+<!-- <Input type="hidden"  th:field="*{customer.custId}"  th:value="${listBooking.bookId}" readonly />
+
+<Input type="hidden"  th:field="*{customer.custName}"  th:value="${listBooking.bookId}" readonly /><br><br>
+
+<Input type="hidden"  th:field="*{vehicle.vehId}"  th:value="${listBooking.bookId}" readonly /><br><br> -->
+
+<Input type="hidden"  th:field="*{vehicle.dailyRate}"  th:value="${listBooking.bookId}" readonly />
+
+					<label class="col-form-label col-sm-18"> Booked By : </label>
+					<div class="col-sm-8">
+					<Input type="text" th:field="*{employee.empName}"  disabled  />
+					</div>
+						
+					<label class="col-form-label col-sm-18"> Customer NRIC : </label>
+					<div class="col-sm-8">
+					<Input type="text" th:field="*{customer.nric}"  disabled  />
+					 </div>	
+					 
+					<label class="col-form-label col-sm-18"> Vehicle Brand : </label>
+					<div class="col-sm-8">
+					<Input type="text"  th:field="*{vehicle.vehBrand}"  disabled  />
+					</div> 
+
+	 						
+<div>	<label> Booking Start Date: </label> </div>
+	 	<span>	<Input type="date" th:field="*{startDate}" readonly /> </span>
+	
+		<div>	<label> Booking End Date: </label> </div>
+	 	<div>	<Input type="date" th:field="*{endDate}" readonly /> </div>
+	 	
+	<div>
+	 		<div>	<label> Actual End Date </label> </div>
+	 			<input type="date" th:field="*{actualEndDate}"  />
+	 	</div> 
+	 		 	
+	 		<div>	<label> Extra Charges: </label> </div>
+	 	<div>	<Input type="text" th:field="*{extraCharges}" required /> </div>
+		 	 	
+	 	<div>	<label> Booking Fee: </label> </div>
+	 	<div>	<Input type="text" th:field="*{bookingFee}" readonly /> </div>
+	 	 		
+	 	<div>	<label> Total Cost: </label> </div>
+	 	<div>	<Input type="text" th:field="*{totalCost}" required /> </div><br><br>
+	 	<a class="btn btn-primary btn-sm m-1" th:href="@{/booking}" style = "float:left;"> Back to Booking List </a>
+	 	<input type="submit"  class="btn btn-primary btn-sm m-1" value="Return Booking" ></input>
+		<a class="btn btn-primary btn-sm m-1"  th:href="@{'/InvoicePdf/' + ${listBooking.bookId}}" style = "float:right;"> Generate Invoice </a>
+		</form>
+		</div>
+
+<br><br>
+	
+			
+<div class="modal fade" id="deleteModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Car Return</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+		 <div class="alert alert-danger"> </div>
+		 <p>Return Successful !!</p>
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
+        
+        <!-- <a class="btn btn-danger" href="" id="delRef">proceed </a> -->
+      </div>
+    </div>
+  </div>
+</div>	
+
+
+<!-- 	<div class="modal" tableindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Car Return Done</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Return Successful</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div th:replace="common :: footer"></div>
+		
+<script  src="../static/js/success.js" th:src="@{js/success.js}"
+        type="text/javascript"></script>
+
+
+</body>
+</html>
